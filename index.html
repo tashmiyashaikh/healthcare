@@ -1,0 +1,363 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CareTrack – Healthcare Reminder</title>
+<style>
+:root{--bg:#eef3f7;--card:#fff;--tx:#14232c;--mu:#667a86;--ac:#14b8a6;--bl:#3b82f6;--red:#ef4444;--amb:#f59e0b;--grn:#22c55e;--bd:#e3ebf0;--sh:0 4px 18px #0f2a4014}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1519;--card:#18222a;--tx:#e8f0f3;--mu:#8fa3ad;--bd:#26343d;--sh:0 4px 18px #0006}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,"Segoe UI",Roboto,sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--bd)}
+.logo{font-weight:800;font-size:1.1rem;background:linear-gradient(90deg,var(--ac),var(--bl));-webkit-background-clip:text;background-clip:text;color:transparent}
+.top small{color:var(--mu);margin-right:10px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:12px 14px;max-width:760px;margin:0 auto}
+nav button{flex:0 0 auto;border:0;background:var(--card);color:var(--mu);padding:8px 14px;border-radius:20px;cursor:pointer;font-size:.85rem;box-shadow:var(--sh);transition:.2s}
+nav button.on{background:linear-gradient(135deg,var(--ac),var(--bl));color:#fff}
+main{max-width:760px;margin:0 auto;padding:2px 14px 50px}
+.card,form{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--sh);animation:in .35s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card h3,form h3{margin:0 0 6px;font-size:1rem}.card p{margin:3px 0;font-size:.85rem;color:var(--mu)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+label{display:block;font-size:.78rem;color:var(--mu);margin:10px 0 4px}
+input{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font-size:.9rem}
+input:focus{outline:0;border-color:var(--ac)}
+.btn{background:linear-gradient(135deg,var(--ac),var(--bl));color:#fff;border:0;padding:10px 18px;border-radius:10px;cursor:pointer;font-size:.9rem;margin-top:14px;font-weight:600;transition:.2s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.btn.sm{margin:0;padding:6px 11px;font-size:.78rem}.btn.ghost{background:none;color:var(--ac);border:1.5px solid var(--ac)}
+.del{background:none;border:0;color:var(--red);cursor:pointer;font-size:.8rem;margin-top:6px}
+.empty{color:var(--mu);text-align:center;padding:22px;font-size:.88rem}
+a.tel{color:var(--ac);font-weight:700;text-decoration:none}
+.hero{background:linear-gradient(135deg,#0d9488,#2563eb);color:#fff;border-radius:22px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;box-shadow:0 12px 30px #2563eb40}
+.hero h2{margin:0 0 4px;font-size:1.3rem}.hero p{margin:0;opacity:.85;font-size:.85rem}
+.pills{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.pill{background:#ffffff26;border-radius:12px;padding:6px 11px;font-size:.75rem}.pill b{display:block;font-size:1.05rem}
+.ring{position:relative;width:96px;height:96px;flex:none}.ring span{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:1.2rem}
+.sos{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 20px #ef444440}
+.sos a{background:#fff;color:#dc2626;padding:9px 16px;border-radius:10px;font-weight:800;text-decoration:none}
+.warn{background:#fef3c7;color:#92400e;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:.87rem}.warn.red{background:#fee2e2;color:#991b1b}
+.dose{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;margin:8px 0;border-left:4px solid var(--bd);background:var(--bg)}
+.dose.taken{border-color:var(--grn)}.dose.late{border-color:var(--amb)}.dose.missed{border-color:var(--red)}.dose.due{border-color:var(--bl)}
+.dose small{color:var(--mu)}
+.chip{font-size:.7rem;padding:3px 9px;border-radius:12px;color:#fff;font-weight:700;background:var(--mu);white-space:nowrap}
+.chip.taken{background:var(--grn)}.chip.late{background:var(--amb)}.chip.missed{background:var(--red)}.chip.due{background:var(--bl)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:520px){.grid4{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--card);border-radius:14px;padding:12px;box-shadow:var(--sh);text-align:center}.tile b{display:block;font-size:1.5rem}.tile small{color:var(--mu);font-size:.75rem}
+.bars{display:flex;gap:8px;height:120px;margin-top:10px}.bar{flex:1;display:flex;flex-direction:column;font-size:.7rem;color:var(--mu);text-align:center}
+.bar .t{flex:1;display:flex;align-items:flex-end}.bar i{display:block;width:100%;border-radius:7px 7px 3px 3px;background:linear-gradient(var(--ac),var(--bl));min-height:4px}.bar i.none{background:var(--bd)}
+.seg{display:flex;background:var(--card);border-radius:10px;padding:3px;box-shadow:var(--sh)}.seg button{border:0;background:none;padding:6px 12px;border-radius:8px;color:var(--mu);cursor:pointer;font-size:.8rem}.seg button.on{background:var(--ac);color:#fff}
+.tip{background:linear-gradient(135deg,#14b8a622,#3b82f622);border-radius:14px;padding:12px 14px;margin-bottom:12px;font-size:.88rem}
+.thumb{max-width:100%;max-height:160px;border-radius:10px;margin-top:6px;cursor:pointer}
+#auth{min-height:100vh;display:grid;place-items:center;padding:16px;background:linear-gradient(135deg,#0d9488,#2563eb)}
+#auth .box{width:100%;max-width:380px;background:var(--card);border-radius:22px;padding:26px;box-shadow:0 20px 50px #0004}
+#auth h2{margin:0;text-align:center}#auth p.s{text-align:center;color:var(--mu);font-size:.85rem;margin:4px 0 8px}
+#msg{color:var(--red);font-size:.85rem;margin-top:12px;min-height:1em}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0f766e;color:#fff;padding:11px 18px;border-radius:12px;display:none;z-index:9;max-width:90%;box-shadow:0 8px 24px #0005}
+.rules{font-size:.78rem;color:var(--mu);margin:8px 2px 0}.rules .ok{color:var(--grn);font-weight:600}
+input{font-size:16px}
+@media(max-width:480px){main{padding:2px 10px 40px}.hero{padding:16px}.hero h2{font-size:1.1rem}.top small{display:none}.dose{flex-wrap:wrap}.btn.sm{padding:9px 13px}nav button{padding:10px 14px}.bars{gap:5px}}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="auth">
+  <div class="box" id="lbox">
+    <h2>🩺 CareTrack</h2><p class="s">Never miss a dose. Know your health routine.</p>
+    <div id="nameWrap" class="hide"><label>Full name</label><input id="nm" type="text" autocomplete="name"></div>
+    <label>Email</label><input id="em" type="email" autocomplete="email">
+    <label>Password</label><input id="pw" type="password" autocomplete="current-password">
+    <div id="pwRules" class="rules hide"><div data-r="len">• At least 8 characters</div><div data-r="up">• One capital letter (A–Z)</div><div data-r="num">• One number (0–9)</div><div data-r="sym">• One symbol (! @ # $ % ...)</div></div>
+    <div id="pw2Wrap" class="hide"><label>Confirm password</label><input id="pw2" type="password" autocomplete="new-password"></div>
+    <button class="btn" id="mainBtn" style="width:100%" onclick="submitAuth()">Login</button>
+    <p style="margin:14px 0 0;font-size:.85rem;text-align:center"><span id="swTxt">New user?</span> <a href="#" id="swLnk" onclick="toggleMode();return false" class="tel">Create an account</a></p>
+    <p id="fpWrap" style="margin:8px 0 0;font-size:.85rem;text-align:center"><a href="#" onclick="forgot();return false" class="tel">Forgot password?</a></p>
+    <div id="msg"></div>
+  </div>
+  <div class="box hide" id="vbox">
+    <h2>📧 Verify your email</h2>
+    <p class="s" id="vtxt"></p>
+    <div class="row"><button class="btn" onclick="checkVerified()">I have verified</button><button class="btn ghost" onclick="resend()">Resend email</button></div>
+    <p style="margin:14px 0 0;font-size:.85rem"><a href="#" onclick="auth.signOut();return false" class="tel">Use a different account (logout)</a></p>
+  </div>
+</div>
+
+<div id="app" class="hide">
+  <div class="top"><span class="logo">🩺 CareTrack</span><div><small id="who"></small><button class="btn sm ghost" onclick="auth.signOut()">Logout</button></div></div>
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ============ 1. PASTE YOUR FIREBASE CONFIG HERE ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyA-EZc9SrH2CPha8OJ1iU6Qexc5tRuEA_g",
+  authDomain: "healthcare-reminder-2af26.firebaseapp.com",
+  projectId: "healthcare-reminder-2af26",
+  storageBucket: "healthcare-reminder-2af26.firebasestorage.app",
+  messagingSenderId: "313840953358",
+  appId: "1:313840953358:web:d056e59cac432c4944f45f"
+};
+/* ============================================================ */
+
+const REQUIRE_VERIFY = true;   // set to false only if the email link will not open and you need to demo
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth(), db = firebase.firestore();
+db.enablePersistence().catch(()=>{});
+const $ = id => document.getElementById(id);
+const esc = s => (s ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const addDays = n => { const d = new Date(); d.setDate(d.getDate()+n); return d; };
+const today = () => ymd(new Date());
+const nowHM = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const t12 = t => { if(!t) return ''; const [h,m] = t.split(':').map(Number); return `${h%12||12}:${pad(m)} ${h<12?'AM':'PM'}`; };
+const dlab = ds => new Date(ds+'T00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+function toast(m,ms){ const t=$('toast'); t.textContent=m; t.style.display='block'; clearTimeout(t._t); t._t=setTimeout(()=>t.style.display='none',ms||4500); }
+
+if (firebaseConfig.apiKey.includes('PASTE')) $('msg').textContent = '⚠ Firebase config not added yet — open index.html and paste your config.';
+
+/* ---------- AUTH ---------- */
+const cred = () => [$('em').value.trim(), $('pw').value];
+const fail = e => $('msg').textContent = e.message.replace('Firebase: ','');
+function login(){ auth.signInWithEmailAndPassword(...cred()).catch(fail); }
+let mode='login';
+function toggleMode(){
+  mode=mode==='login'?'signup':'login'; const s=mode==='signup';
+  $('nameWrap').classList.toggle('hide',!s); $('pw2Wrap').classList.toggle('hide',!s); $('pwRules').classList.toggle('hide',!s); $('fpWrap').classList.toggle('hide',s);
+  $('mainBtn').textContent=s?'Create account':'Login'; $('swTxt').textContent=s?'Already have an account?':'New user?'; $('swLnk').textContent=s?'Login':'Create an account';
+  $('pw').autocomplete=s?'new-password':'current-password'; $('msg').textContent='';
+}
+const pwCheck=p=>({len:p.length>=8,up:/[A-Z]/.test(p),num:/[0-9]/.test(p),sym:/[^A-Za-z0-9]/.test(p)});
+function showRules(){ const r=pwCheck($('pw').value); document.querySelectorAll('#pwRules div').forEach(d=>{ const ok=r[d.dataset.r]; d.classList.toggle('ok',ok); d.textContent=(ok?'✔ ':'• ')+d.textContent.slice(2); }); }
+$('pw').addEventListener('input',showRules);
+function submitAuth(){ mode==='login' ? login() : signup(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Enter' && !$('auth').classList.contains('hide') && !$('lbox').classList.contains('hide')) submitAuth(); });
+function signup(){
+  const n=$('nm').value.trim(), [e,p]=cred();
+  if(!n) return $('msg').textContent='Please enter your full name.';
+  const r=pwCheck(p); if(!(r.len&&r.up&&r.num&&r.sym)) return $('msg').textContent='Password needs 8+ characters, a capital letter, a number and a symbol.';
+  if(p!==$('pw2').value) return $('msg').textContent='Passwords do not match.';
+  auth.createUserWithEmailAndPassword(e,p).then(c=>c.user.updateProfile({displayName:n}).then(()=>c.user.sendEmailVerification())).catch(fail);
+}
+function showVerify(u){
+  $('app').classList.add('hide'); $('auth').classList.remove('hide'); $('lbox').classList.add('hide'); $('vbox').classList.remove('hide');
+  $('vtxt').textContent='We sent a verification link to '+u.email+'. Open it (check Spam too), then press the button below.';
+}
+function checkVerified(){
+  auth.currentUser.reload().then(()=>{ if(auth.currentUser.emailVerified) location.reload(); else toast('Not verified yet. Open the link in your email first.'); });
+}
+function resend(){ auth.currentUser.sendEmailVerification().then(()=>toast('Verification email sent again.')).catch(e=>toast(e.message.replace('Firebase: ',''))); }
+function forgot(){
+  const e = $('em').value.trim(); if(!e) return $('msg').textContent='Enter your email first.';
+  auth.sendPasswordResetEmail(e).then(()=>$('msg').textContent='Reset link sent — check your email.').catch(fail);
+}
+
+/* ---------- DATA MODEL (Firestore: users/{uid}/{collection}) ---------- */
+const T = {
+  med:{label:'Medicines',icon:'💊',f:[['name','Medicine name','text',1],['dosage','Dosage (e.g. 1 tablet after food)','text'],['time','Daily reminder time','time',1],['stock','Tablets in stock (optional – for refill alert)','number']]},
+  appt:{label:'Appointments',icon:'🗓️',f:[['doctor','Doctor / clinic','text',1],['date','Date','date',1],['time','Time','time',1],['notes','Notes','text']]},
+  task:{label:'Wellness',icon:'🌿',f:[['name','Task (e.g. drink water, 20 min walk)','text',1],['time','Reminder time','time']]},
+  rep:{label:'Reports',icon:'📄',f:[['name','Report title','text',1],['date','Report date','date'],['file','File (image or PDF)','file',1]]},
+  con:{label:'Contacts',icon:'📞',f:[['name','Name','text',1],['relation','Relation','text'],['phone','Phone number','tel',1]]}
+};
+let uid=null, data={med:[],appt:[],task:[],rep:[],con:[],logs:[]}, unsubs=[], tab='dash', fired={}, hf='all';
+const col = t => db.collection('users').doc(uid).collection(t);
+
+auth.onAuthStateChanged(u=>{
+  unsubs.forEach(f=>f()); unsubs=[];
+  if(!u){ uid=null; $('app').classList.add('hide'); $('auth').classList.remove('hide'); $('lbox').classList.remove('hide'); $('vbox').classList.add('hide'); return; }
+  if(REQUIRE_VERIFY && !u.emailVerified){ uid=null; showVerify(u); return; }
+  uid=u.uid; $('who').textContent=u.displayName||u.email; $('msg').textContent='';
+  $('auth').classList.add('hide'); $('app').classList.remove('hide');
+  [...Object.keys(T),'logs'].forEach(t=>unsubs.push(col(t).onSnapshot(s=>{
+    data[t]=s.docs.map(d=>({id:d.id,...d.data()})); refresh(t);
+  }, e=>toast('Database error: '+e.message))));
+  buildNav(); show('dash');
+  if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+});
+
+/* ---------- DOSE ENGINE: builds the dose history from medicines + logs ---------- */
+const CH = {taken:'Taken ✔',late:'Taken late',missed:'Missed',due:'Due now',upcoming:'Upcoming'};
+function doses(days=30){
+  const out=[], now=Date.now(), L=Object.fromEntries(data.logs.map(l=>[l.id,l]));
+  data.med.forEach(m=>{
+    const cr = m.created || now;
+    for(let i=0;i<days;i++){
+      const ds=ymd(addDays(-i)), sc=new Date(`${ds}T${m.time}:00`).getTime(), l=L[m.id+'_'+ds];
+      if(sc<cr && !l) continue;                                   // dose time was before the medicine was added
+      const st = l ? (l.takenAt>sc+3600000?'late':'taken') : sc>now ? 'upcoming' : (now-sc<3600000?'due':'missed');
+      out.push({medId:m.id,name:m.name,dosage:m.dosage,date:ds,time:m.time,sc,st,takenAt:l&&l.takenAt});
+    }
+  });
+  return out.sort((a,b)=>b.sc-a.sc);
+}
+const counted = x => x.filter(d=>['taken','late','missed'].includes(d.st));
+const pct = x => { const c=counted(x); return c.length ? Math.round(c.filter(d=>d.st!=='missed').length/c.length*100) : null; };
+function stats(){
+  const ds=doses(30), d7=ds.filter(x=>x.sc>Date.now()-7*864e5);
+  let streak=0;
+  for(let i=0;i<30;i++){
+    const e=counted(ds.filter(x=>x.date===ymd(addDays(-i))));
+    if(!e.length){ if(i===0) continue; break; }
+    if(e.some(x=>x.st==='missed')) break; streak++;
+  }
+  return {ds, p7:pct(d7), p30:pct(ds), streak, missed:ds.filter(x=>x.st==='missed')};
+}
+function mark(medId,date,on){
+  const m=data.med.find(x=>x.id===medId); if(!m) return;
+  const ref=col('logs').doc(medId+'_'+date);
+  if(on) ref.set({medId,name:m.name,date,time:m.time,status:'taken',takenAt:Date.now()}); else ref.delete();
+  if(typeof m.stock==='number') col('med').doc(medId).update({stock:firebase.firestore.FieldValue.increment(on?(m.stock>0?-1:0):1)});
+}
+function tdone(id,on){ col('task').doc(id).update({doneOn:on?today():''}); }
+
+/* ---------- NAV ---------- */
+function buildNav(){
+  $('nav').innerHTML=[['dash','🏠 Home'],['hist','📊 History'],...Object.entries(T).map(([k,v])=>[k,v.icon+' '+v.label])]
+    .map(([k,l])=>`<button data-t="${k}" onclick="show('${k}')">${l}</button>`).join('');
+}
+function show(t){
+  tab=t;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  if(t==='dash') return dash();
+  if(t==='hist') return hist();
+  $('main').innerHTML=`<form onsubmit="return false"><h3>Add ${T[t].label.replace(/([^s])s$/,'$1')}</h3>`+
+    T[t].f.map(([k,l,ty])=>`<label>${l}</label><input id="f_${k}" type="${ty}" ${ty==='file'?'accept="image/*,.pdf"':''}>`).join('')+
+    `<button class="btn" onclick="add('${t}')">Save</button></form><div id="list"></div>`;
+  list(t);
+}
+function refresh(t){
+  if(tab==='dash') dash(); else if(tab==='hist') hist();
+  else if(tab===t || (tab==='med'&&t==='logs')) list(tab);
+}
+
+/* ---------- ADD / DELETE ---------- */
+async function add(t){
+  const o={created:Date.now()};
+  for(const [k,l,ty,req] of T[t].f){
+    const el=$('f_'+k);
+    if(ty==='file'){
+      if(el.files[0]){ try{ o.data=await compress(el.files[0]); o.mime=o.data.slice(5,o.data.indexOf(';')); }catch(e){ return toast(e); } }
+      else if(req) return toast('Please choose a file');
+    } else if(ty==='number'){ o[k]=el.value===''?null:Number(el.value); }
+    else { o[k]=el.value.trim(); if(req && !o[k]) return toast('Please fill: '+l); }
+  }
+  try{ await col(t).add(o); toast('Saved ✔'); show(t); }catch(e){ toast('Could not save: '+e.message); }
+}
+function del(t,id){ if(confirm('Delete this item?')) col(t).doc(id).delete(); }
+
+/* ---------- FILES (images compressed to fit Firestore's 1 MB limit) ---------- */
+function compress(file){
+  return new Promise((res,rej)=>{
+    if(file.type==='application/pdf'){
+      if(file.size>700000) return rej('PDF too large (max ~700 KB)');
+      const r=new FileReader(); r.onload=()=>res(r.result); return r.readAsDataURL(file);
+    }
+    const img=new Image();
+    img.onload=()=>{ const s=Math.min(1,1000/Math.max(img.width,img.height)), c=document.createElement('canvas');
+      c.width=img.width*s; c.height=img.height*s; c.getContext('2d').drawImage(img,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',.7)); };
+    img.onerror=()=>rej('Could not read that image'); img.src=URL.createObjectURL(file);
+  });
+}
+function openReport(id){
+  const r=data.rep.find(x=>x.id===id); if(!r) return;
+  const b=atob(r.data.split(',')[1]), a=new Uint8Array(b.length); for(let i=0;i<b.length;i++) a[i]=b.charCodeAt(i);
+  window.open(URL.createObjectURL(new Blob([a],{type:r.mime})),'_blank');
+}
+
+/* ---------- LISTS ---------- */
+const sorters = {
+  med:(a,b)=>(a.time||'').localeCompare(b.time||''), task:(a,b)=>(a.time||'').localeCompare(b.time||''),
+  appt:(a,b)=>(a.date+a.time).localeCompare(b.date+b.time), rep:(a,b)=>b.created-a.created, con:(a,b)=>a.name.localeCompare(b.name)
+};
+function item(t,i){
+  const d=today();
+  if(t==='med') return `<h3>💊 ${esc(i.name)} ${typeof i.stock==='number'&&i.stock<=5?'<span class="chip missed">Low stock</span>':''}</h3><p>${esc(i.dosage)}</p><p>⏰ Daily at ${t12(i.time)}${typeof i.stock==='number'?' · '+i.stock+' left':''}</p>`;
+  if(t==='appt') return `<h3>🗓️ ${esc(i.doctor)} ${i.date<d?'<span class="chip">Past</span>':''}</h3><p>${dlab(i.date)} at ${t12(i.time)}</p><p>${esc(i.notes)}</p>`;
+  if(t==='task') return `<h3>🌿 ${esc(i.name)} ${i.doneOn===d?'<span class="chip taken">Done today</span>':''}</h3><p>⏰ ${i.time?t12(i.time):'no reminder'}</p>`;
+  if(t==='con') return `<h3>📞 ${esc(i.name)}</h3><p>${esc(i.relation)}</p><p><a class="tel" href="tel:${esc(i.phone)}">${esc(i.phone)}</a></p>`;
+  return `<h3>📄 ${esc(i.name)}</h3><p>${esc(i.date)}</p>`+(i.mime.startsWith('image')?`<img class="thumb" src="${i.data}" onclick="openReport('${i.id}')">`:`<button class="btn sm" onclick="openReport('${i.id}')">Open PDF</button>`);
+}
+function list(t){
+  const L=[...data[t]].sort(sorters[t]), td=t==='med'?doses(1).filter(x=>x.date===today()):[];
+  $('list').innerHTML = L.length ? L.map(i=>{
+    let b=''; const d=today();
+    if(t==='med'){ const x=td.find(z=>z.medId===i.id), ok=x&&(x.st==='taken'||x.st==='late'); if(x) b=`<button class="btn sm ${ok?'ghost':''}" onclick="mark('${i.id}','${d}',${!ok})">${ok?'Undo':'Mark taken'}</button><br>`; }
+    if(t==='task') b=`<button class="btn sm ${i.doneOn===d?'ghost':''}" onclick="tdone('${i.id}',${i.doneOn!==d})">${i.doneOn===d?'Undo':'Done'}</button><br>`;
+    return `<div class="card"><div class="row"><div style="flex:1">${item(t,i)}</div><div style="text-align:right">${b}<button class="del" onclick="del('${t}','${i.id}')">Delete</button></div></div></div>`;
+  }).join('') : '<div class="empty">Nothing added yet.</div>';
+}
+
+/* ---------- HOME ---------- */
+const isOk = x => x.st==='taken'||x.st==='late';
+function doseRow(x,btn){
+  return `<div class="dose ${x.st}"><div><b>${esc(x.name)}</b> <small>${esc(x.dosage||'')}</small><br><small>⏰ ${t12(x.time)}${x.takenAt?' · taken at '+new Date(x.takenAt).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}):''}</small></div>
+  <div style="text-align:right"><span class="chip ${x.st}">${CH[x.st]}</span>${btn?`<br><button class="btn sm ${isOk(x)?'ghost':''}" style="margin-top:6px" onclick="mark('${x.medId}','${x.date}',${!isOk(x)})">${isOk(x)?'Undo':'Mark taken'}</button>`:''}</div></div>`;
+}
+function dash(){
+  const s=stats(), d=today(), td=s.ds.filter(x=>x.date===d).sort((a,b)=>a.sc-b.sc), done=td.filter(isOk).length, p=td.length?Math.round(done/td.length*100):0;
+  const ups=data.appt.filter(a=>a.date>=d).sort(sorters.appt).slice(0,3), c=data.con[0], low=data.med.filter(m=>typeof m.stock==='number'&&m.stock<=5);
+  const tm=s.missed.filter(x=>x.date===d), h=new Date().getHours(), name=auth.currentUser.displayName||auth.currentUser.email.split('@')[0];
+  $('main').innerHTML=`
+  <div class="hero"><div><h2>${h<12?'Good morning':h<17?'Good afternoon':'Good evening'}, ${esc(name)} 👋</h2>
+    <p>${td.length?`${done} of ${td.length} doses taken today`:'No doses scheduled today'}</p>
+    <div class="pills"><div class="pill"><b>🔥 ${s.streak}</b>day streak</div><div class="pill"><b>${s.p7??'–'}${s.p7!=null?'%':''}</b>7-day adherence</div><div class="pill"><b>${tm.length}</b>missed today</div></div></div>
+    <div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="#ffffff30" stroke-width="9"/><circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="${2.64*p} 264" transform="rotate(-90 50 50)"/></svg><span>${td.length?p+'%':'–'}</span></div></div>
+  ${tm.length?`<div class="warn red">⚠️ You missed ${tm.length} dose${tm.length>1?'s':''} today: ${tm.map(x=>esc(x.name)+' ('+t12(x.time)+')').join(', ')}</div>`:''}
+  ${low.map(m=>`<div class="warn">💊 Refill soon: <b>${esc(m.name)}</b> has only ${m.stock} tablet${m.stock===1?'':'s'} left.</div>`).join('')}
+  ${c?`<div class="sos"><div><b>🚨 Emergency</b><br><small>${esc(c.name)} ${c.relation?'('+esc(c.relation)+')':''}</small></div><a href="tel:${esc(c.phone)}">📞 Call now</a></div>`:'<div class="card"><p>Add an emergency contact to enable the one-tap SOS button here.</p></div>'}
+  <div class="card"><h3>💊 Today's doses</h3>${td.length?td.map(x=>doseRow(x,true)).join(''):'<p>Add a medicine to start tracking.</p>'}</div>
+  <div class="card"><h3>🗓️ Upcoming appointments</h3>${ups.length?ups.map(a=>`<p>${dlab(a.date)} · ${t12(a.time)} — <b style="color:var(--tx)">${esc(a.doctor)}</b></p>`).join(''):'<p>None scheduled.</p>'}</div>
+  <div class="card"><h3>Summary</h3><p>${data.med.length} medicines · ${data.task.length} wellness tasks · ${data.rep.length} reports · ${data.con.length} emergency contacts</p></div>`;
+}
+
+/* ---------- HISTORY / FOLLOW-UP ---------- */
+function hist(){
+  const s=stats(), days=[...Array(7)].map((_,k)=>{ const ds=ymd(addDays(k-6)), e=counted(s.ds.filter(x=>x.date===ds)); return {ds,p:e.length?Math.round(e.filter(isOk).length/e.length*100):null}; });
+  const rows=s.ds.filter(x=>x.st!=='upcoming'&&(hf==='all'||x.st==='missed')&&x.sc>Date.now()-14*864e5), g={};
+  rows.forEach(x=>(g[x.date]=g[x.date]||[]).push(x));
+  const bk=x=>{const h=+x.time.slice(0,2);return h<12?'morning':h<17?'afternoon':'evening/night';}, mc={};
+  s.missed.forEach(x=>mc[bk(x)]=(mc[bk(x)]||0)+1);
+  const top=Object.entries(mc).sort((a,b)=>b[1]-a[1])[0];
+  $('main').innerHTML=`
+  <div class="grid4"><div class="tile"><b>${s.p7??'–'}${s.p7!=null?'%':''}</b><small>7-day adherence</small></div><div class="tile"><b>${s.p30??'–'}${s.p30!=null?'%':''}</b><small>30-day adherence</small></div><div class="tile"><b>🔥 ${s.streak}</b><small>day streak</small></div><div class="tile"><b>${s.missed.length}</b><small>missed (30 days)</small></div></div>
+  ${s.p30==null?'':`<div class="tip">${top?`💡 <b>Insight:</b> most of your missed doses (${top[1]} of ${s.missed.length}) are in the <b>${top[0]}</b>. Try moving that reminder to a time you're free.`:'🎉 <b>Perfect record!</b> No missed doses in the last 30 days — keep it up.'}</div>`}
+  <div class="card"><h3>Last 7 days</h3><div class="bars">${days.map(x=>`<div class="bar"><div class="t"><i class="${x.p==null?'none':''}" style="${x.p==null?'':'height:'+Math.max(x.p,4)+'%'}" title="${x.p==null?'No data':x.p+'%'}"></i></div>${new Date(x.ds+'T00:00').toLocaleDateString('en-IN',{weekday:'short'})}<br>${x.p==null?'–':x.p+'%'}</div>`).join('')}</div></div>
+  <div class="row" style="margin:4px 2px 12px"><div class="seg"><button class="${hf==='all'?'on':''}" onclick="hf='all';hist()">All doses</button><button class="${hf==='missed'?'on':''}" onclick="hf='missed';hist()">Missed only</button></div><button class="btn sm ghost" onclick="exportCSV()">⬇ Export for doctor</button></div>
+  ${Object.keys(g).length?Object.keys(g).sort().reverse().map(ds=>`<div class="card"><h3>${dlab(ds)}</h3>${g[ds].sort((a,b)=>a.sc-b.sc).map(x=>doseRow(x,false)).join('')}</div>`).join(''):'<div class="empty">Nothing to show yet. Add a medicine and mark doses as you take them — missed ones appear here automatically.</div>'}`;
+}
+function exportCSV(){
+  const r=[['Date','Scheduled time','Medicine','Status','Taken at']];
+  stats().ds.filter(x=>x.st!=='upcoming').reverse().forEach(x=>r.push([x.date,t12(x.time),x.name,CH[x.st].replace(' ✔',''),x.takenAt?new Date(x.takenAt).toLocaleString('en-IN'):'']));
+  const csv=r.map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='medicine-adherence-report.csv'; a.click();
+}
+
+/* ---------- REMINDER ENGINE (checks every 20 s while the app is open) ---------- */
+function alertUser(title,body){
+  try{ if('Notification' in window && Notification.permission==='granted') new Notification(title,{body}); }catch(e){}   // phones may refuse this
+  try{ navigator.vibrate && navigator.vibrate([250,120,250]); }catch(e){}
+  toast(title+(body?' — '+body:''),15000);
+}
+setInterval(()=>{
+  if(!uid) return; const d=today(), t=nowHM(), now=Date.now();
+  doses(1).filter(x=>x.date===d).forEach(x=>{
+    const k='d'+x.medId+d+x.st;
+    if(x.st==='due' && x.time===t && !fired[k]){ fired[k]=1; alertUser('💊 Time for '+x.name, x.dosage); }
+    if(x.st==='missed' && now-x.sc<4200000 && !fired[k]){ fired[k]=1; alertUser('⚠️ Missed dose: '+x.name, 'Scheduled at '+t12(x.time)); }
+  });
+  data.task.forEach(x=>{ const k='t'+x.id+d+t; if(x.time===t && x.doneOn!==d && !fired[k]){ fired[k]=1; alertUser('🌿 '+x.name,''); } });
+  data.appt.forEach(a=>{ const k='a'+a.id+d+t; if(a.date===d && a.time===t && !fired[k]){ fired[k]=1; alertUser('🗓️ Appointment: '+a.doctor, a.notes); } });
+},20000);
+</script>
+</body>
+</html>
